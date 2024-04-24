@@ -14,8 +14,8 @@ const STOCK_PRICE_STD_DEV: f64 = STOCK_PRICE_AVG * 0.3;
 const STOCKS_COUNT: usize = 10000;
 
 #[derive(Debug)]
-struct Stock {
-    name: char,
+struct Record {
+    stock: char,
     open: f64,
     low: f64,
     high: f64,
@@ -23,10 +23,17 @@ struct Stock {
     timestamp: NaiveTime,
 }
 
-impl Stock {
-    fn new(name: char, open: f64, low: f64, high: f64, close: f64, timestamp: NaiveTime) -> Stock {
-        Stock {
-            name,
+impl Record {
+    fn new(
+        stock: char,
+        open: f64,
+        low: f64,
+        high: f64,
+        close: f64,
+        timestamp: NaiveTime,
+    ) -> Record {
+        Record {
+            stock,
             open,
             low,
             high,
@@ -35,10 +42,10 @@ impl Stock {
         }
     }
 
-    fn make_new_stock() -> Stock {
+    fn make_new_stock() -> Record {
         let mut rng = rand::thread_rng();
         let normal = Normal::new(STOCK_PRICE_AVG, STOCK_PRICE_STD_DEV).unwrap();
-        let name = STOCKS[rng.gen_range(0..26)];
+        let stock = STOCKS[rng.gen_range(0..26)];
         let (low, high) = loop {
             let s1 = normal.sample(&mut rng);
             let s2 = normal.sample(&mut rng);
@@ -59,13 +66,13 @@ impl Stock {
             rng.gen_range(0..1000),
         )
         .unwrap();
-        Stock::new(name, open, low, high, close, timestamp)
+        Record::new(stock, open, low, high, close, timestamp)
     }
 
     fn to_column(&self) -> String {
         format!(
             "stock{},{:.2},{:.2},{:.2},{:.2},{}",
-            self.name,
+            self.stock,
             self.open,
             self.low,
             self.high,
@@ -76,9 +83,9 @@ impl Stock {
 }
 
 fn main() {
-    let mut stocks: Vec<Stock> = Vec::new();
+    let mut stocks: Vec<Record> = Vec::new();
     for _ in 0..STOCKS_COUNT {
-        let stock = Stock::make_new_stock();
+        let stock = Record::make_new_stock();
         stocks.push(stock);
     }
     stocks.sort_by(|s1, s2| s1.timestamp.cmp(&s2.timestamp));
