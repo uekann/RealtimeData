@@ -11,7 +11,7 @@ const STOCKS: [char; 26] = [
 const STOCK_PRICE_AVG: f64 = 38429.96;
 const STOCK_PRICE_STD_DEV: f64 = STOCK_PRICE_AVG * 0.3;
 
-const STOCKS_COUNT: usize = 100000;
+const STOCKS_COUNT: usize = 10000;
 
 #[derive(Debug)]
 struct Stock {
@@ -83,7 +83,7 @@ fn main() {
     }
     stocks.sort_by(|s1, s2| s1.timestamp.cmp(&s2.timestamp));
 
-    let mut file = File::create("stock_data.txt").unwrap();
+    let mut file = File::create("./task1/data/stock_data.txt").unwrap();
     file.write(b"stock,open,low,high,close,timestamp\n")
         .unwrap();
     file.write(
