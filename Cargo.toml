@@ -1,5 +1,5 @@
 [workspace]
 
-members = ["task1"]
+members = ["task1", "task2"]
 
 resolver = "2"
