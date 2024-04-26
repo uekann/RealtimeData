@@ -236,6 +236,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "task3_client"
+version = "0.1.0"
+
+[[package]]
+name = "task3_server"
+version = "0.1.0"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
