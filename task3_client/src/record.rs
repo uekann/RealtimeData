@@ -1,6 +1,6 @@
 use chrono::NaiveTime;
 
-struct Record {
+pub struct Record {
     stock: char,
     open: f64,
     low: f64,

@@ -23,7 +23,9 @@ fn main() -> Result<()> {
             let mut stream_writer = BufWriter::new(&stream);
 
             println!("Sending data to client...");
-            for mut line in file_reader.lines().map(|l| l.expect("Failed to read line")) {
+            let mut lines = file_reader.lines();
+            lines.next();
+            for mut line in lines.map(|l| l.expect("Failed to read line")) {
                 line.push_str("\r\n");
                 stream_writer.write_all(line.as_bytes())?;
 

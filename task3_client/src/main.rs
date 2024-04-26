@@ -1,5 +1,6 @@
 mod record;
 
+use crate::record::Record;
 use anyhow::Result;
 use std::env;
 use std::io::{BufReader, Read};
@@ -15,7 +16,7 @@ fn main() -> Result<()> {
     let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(5))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    let mut records = Vec::new();
+    let mut records: Vec<Record> = Vec::new();
 
     let mut buffer = Vec::new();
     loop {
@@ -33,11 +34,10 @@ fn main() -> Result<()> {
         };
         let new_records = buffer_string[..last_crlf]
             .split("\r\n")
-            .map(|s| s.to_string())
-            .collect::<Vec<String>>();
+            .map(|s| s.into())
+            .collect::<Vec<Record>>();
         println!("Received {} records", new_records.len());
-        new_records.iter().for_each(|r| println!("{}", r));
-        // new_records.last().map(|r| println!("Last record : {}", r));
+
         records.extend(new_records);
 
         buffer = buffer[last_crlf + 2..].to_vec();
