@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use chrono::NaiveTime;
 use rand::Rng;
 use rand_distr::{Distribution, Normal};

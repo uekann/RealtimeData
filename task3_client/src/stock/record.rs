@@ -10,7 +10,7 @@ pub struct Record {
 }
 
 impl Record {
-    fn new(
+    pub fn new(
         stock: char,
         open: f64,
         low: f64,
@@ -27,12 +27,24 @@ impl Record {
             timestamp,
         }
     }
+
+    pub fn to_column(&self) -> String {
+        format!(
+            "stock{},{:.2},{:.2},{:.2},{:.2},{}",
+            self.stock,
+            self.open,
+            self.low,
+            self.high,
+            self.close,
+            self.timestamp.format("%H:%M:%S%.3f").to_string()
+        )
+    }
 }
 
 impl From<&str> for Record {
     fn from(s: &str) -> Record {
         let mut parts = s.split(",");
-        let stock = parts.next().unwrap().chars().next().unwrap();
+        let stock = parts.next().unwrap().chars().last().unwrap();
         let open = parts.next().unwrap().parse().unwrap();
         let low = parts.next().unwrap().parse().unwrap();
         let high = parts.next().unwrap().parse().unwrap();

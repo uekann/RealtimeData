@@ -36,7 +36,11 @@ fn main() -> Result<()> {
             .split("\r\n")
             .map(|s| s.into())
             .collect::<Vec<Record>>();
+
         println!("Received {} records", new_records.len());
+        new_records
+            .iter()
+            .for_each(|r| println!("{}", r.to_column()));
 
         records.extend(new_records);
 
