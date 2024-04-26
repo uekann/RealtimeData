@@ -99,12 +99,12 @@ impl ToString for StockKind {
 }
 
 pub struct Record {
-    stock: StockKind,
-    open: f64,
-    low: f64,
-    high: f64,
-    close: f64,
-    timestamp: NaiveTime,
+    pub stock: StockKind,
+    pub open: f64,
+    pub low: f64,
+    pub high: f64,
+    pub close: f64,
+    pub timestamp: NaiveTime,
 }
 
 impl Record {
