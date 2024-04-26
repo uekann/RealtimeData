@@ -1,6 +1,6 @@
-mod record;
+mod stock;
 
-use crate::record::Record;
+use crate::stock::record::Record;
 use anyhow::Result;
 use std::env;
 use std::io::{BufReader, Read};
