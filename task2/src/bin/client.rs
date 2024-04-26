@@ -1,7 +1,8 @@
 use anyhow::Result;
 use std::env;
-use std::io::{Read, Write};
+use std::io::{BufReader, Read};
 use std::net::{IpAddr, SocketAddr, TcpStream};
+use std::time::Duration;
 
 fn main() -> Result<()> {
     let ip_string = env::var("SERVER_IP")?;
@@ -9,33 +10,37 @@ fn main() -> Result<()> {
 
     let server_address = SocketAddr::new(IpAddr::V4(ip_string.parse()?), port_number);
 
-    let mut stream = match TcpStream::connect(server_address) {
-        Ok(stream) => stream,
-        Err(_) => {
-            println!("\nConnection Failed \n");
-            std::process::exit(1);
-        }
-    };
+    let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(5))?;
+    let mut stream_reader = BufReader::new(&stream);
 
-    let message = "Hello from client";
-    match stream.write_all(message.as_bytes()) {
-        Ok(_) => println!("Message sent to server"),
-        Err(e) => {
-            eprintln!("Error sending message: {}", e);
-            std::process::exit(1);
+    let mut records = Vec::new();
+
+    let mut buffer = Vec::new();
+    loop {
+        let mut tmp_buffer = vec![0; 1024];
+        if stream_reader.read(&mut tmp_buffer)? == 0 {
+            break;
         }
+
+        buffer.extend_from_slice(&tmp_buffer);
+
+        let buffer_string = String::from_utf8_lossy(&buffer);
+        let last_crlf = match buffer_string.rfind("\r\n") {
+            Some(i) => i,
+            None => continue,
+        };
+        let new_records = buffer_string[..last_crlf]
+            .split("\r\n")
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>();
+        println!("Received {} records", new_records.len());
+        new_records.iter().for_each(|r| println!("{}", r));
+        // new_records.last().map(|r| println!("Last record : {}", r));
+        records.extend(new_records);
+
+        buffer = buffer[last_crlf + 2..].to_vec();
     }
 
-    let mut buffer = [0u8; 1024];
-    match stream.read(&mut buffer) {
-        Ok(bytes_read) => {
-            let received_message = String::from_utf8_lossy(&buffer[..bytes_read]);
-            println!("Received message is \"{}\"", received_message);
-        }
-        Err(e) => {
-            eprintln!("Error reading from server: {}", e);
-            std::process::exit(1);
-        }
-    }
+    println!("Received {} records in total", records.len());
     Ok(())
 }

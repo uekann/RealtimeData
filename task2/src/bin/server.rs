@@ -1,6 +1,7 @@
 use anyhow::Result;
 use std::env;
-use std::io::{Read, Write};
+use std::fs::File;
+use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::net::{IpAddr, Shutdown, SocketAddr, TcpListener};
 
 fn main() -> Result<()> {
@@ -13,31 +14,28 @@ fn main() -> Result<()> {
     println!("Listening for connections on port {}", port_number);
 
     match listener.accept() {
-        Ok((mut socket, addr)) => {
+        Ok((stream, addr)) => {
             println!("Accepted connection from {:?}", addr);
 
-            let mut buffer = [0; 1024];
-            match socket.read(&mut buffer) {
-                Ok(bytes_read) => {
-                    let message = String::from_utf8_lossy(&buffer[..bytes_read]);
-                    println!("Received message is \"{}\"", message);
-                }
-                Err(e) => {
-                    eprintln!("Error reading from client: {}", e);
-                    std::process::exit(1);
-                }
+            let file = File::open("./task2/data/stock_data.txt")?;
+            let file_reader = BufReader::new(file);
+
+            let mut stream_writer = BufWriter::new(&stream);
+
+            println!("Sending data to client...");
+            for mut line in file_reader.lines().map(|l| l.expect("Failed to read line")) {
+                line.push_str("\r\n");
+                stream_writer.write_all(line.as_bytes())?;
+
+                // 0.01s delay
+                std::thread::sleep(std::time::Duration::from_millis(1));
             }
 
-            let response = "Hello from server";
-            if let Err(e) = socket.write_all(response.as_bytes()) {
-                eprintln!("Error sending message to client: {}", e);
-                std::process::exit(1);
-            } else {
-                println!("Message sent to client");
-            }
+            stream_writer.flush()?;
+            println!("Data sent to client");
+            stream.shutdown(Shutdown::Both)?;
 
-            // Close the connection.
-            socket.shutdown(Shutdown::Both).expect("Shutdown failed");
+            println!("Connection closed");
         }
         Err(e) => {
             eprintln!("Accept error: {}", e);
