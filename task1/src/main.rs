@@ -20,7 +20,7 @@ struct Record {
     low: f64,
     high: f64,
     close: f64,
-    timestamp: NaiveTime,
+    // timestamp: NaiveTime,
 }
 
 impl Record {
@@ -30,7 +30,7 @@ impl Record {
         low: f64,
         high: f64,
         close: f64,
-        timestamp: NaiveTime,
+        // timestamp: NaiveTime,
     ) -> Record {
         Record {
             stock,
@@ -38,7 +38,7 @@ impl Record {
             low,
             high,
             close,
-            timestamp,
+            // timestamp,
         }
     }
 
@@ -59,25 +59,27 @@ impl Record {
         };
         let open = rng.gen_range(low..high);
         let close = rng.gen_range(low..high);
-        let timestamp = NaiveTime::from_hms_milli_opt(
-            rng.gen_range(0..24),
-            rng.gen_range(0..60),
-            rng.gen_range(0..60),
-            rng.gen_range(0..1000),
-        )
-        .unwrap();
-        Record::new(stock, open, low, high, close, timestamp)
+        // let timestamp = NaiveTime::from_hms_milli_opt(
+        //     rng.gen_range(0..24),
+        //     rng.gen_range(0..60),
+        //     rng.gen_range(0..60),
+        //     rng.gen_range(0..1000),
+        // )
+        // .unwrap();
+        // Record::new(stock, open, low, high, close, timestamp)
+        Record::new(stock, open, low, high, close)
     }
 
     fn to_column(&self) -> String {
         format!(
-            "stock{},{:.2},{:.2},{:.2},{:.2},{}",
+            // "stock{},{:.2},{:.2},{:.2},{:.2},{}",
+            "stock{},{:.2},{:.2},{:.2},{:.2}",
             self.stock,
             self.open,
             self.low,
             self.high,
             self.close,
-            self.timestamp.format("%H:%M:%S%.3f").to_string()
+            // self.timestamp.format("%H:%M:%S%.3f").to_string()
         )
     }
 }
@@ -88,11 +90,15 @@ fn main() {
         let stock = Record::make_new_stock();
         stocks.push(stock);
     }
-    stocks.sort_by(|s1, s2| s1.timestamp.cmp(&s2.timestamp));
+    // stocks.sort_by(|s1, s2| s1.timestamp.cmp(&s2.timestamp));
 
-    let mut file = File::create("./task1/data/stock_data.txt").unwrap();
-    file.write(b"stock,open,low,high,close,timestamp\n")
-        .unwrap();
+    // let mut file = File::create("./task1/data/stock_data.txt").unwrap();
+    // file.write(b"stock,open,low,high,close,timestamp\n")
+    //     .unwrap();
+
+    let mut file = File::create("./task1/data/stock_data_without_timestamp.txt").unwrap();
+    file.write(b"stock,open,low,high,close\n").unwrap();
+
     file.write(
         stocks
             .iter()
