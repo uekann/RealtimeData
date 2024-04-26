@@ -238,10 +238,17 @@ dependencies = [
 [[package]]
 name = "task3_client"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+]
 
 [[package]]
 name = "task3_server"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+]
 
 [[package]]
 name = "unicode-ident"
