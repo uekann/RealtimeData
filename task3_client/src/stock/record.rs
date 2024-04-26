@@ -1,7 +1,105 @@
 use chrono::NaiveTime;
+use std::string::ToString;
+
+pub enum StockKind {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
+    N,
+    O,
+    P,
+    Q,
+    R,
+    S,
+    T,
+    U,
+    V,
+    W,
+    X,
+    Y,
+    Z,
+}
+
+impl StockKind {
+    pub fn from_char(c: char) -> StockKind {
+        match c {
+            'A' => StockKind::A,
+            'B' => StockKind::B,
+            'C' => StockKind::C,
+            'D' => StockKind::D,
+            'E' => StockKind::E,
+            'F' => StockKind::F,
+            'G' => StockKind::G,
+            'H' => StockKind::H,
+            'I' => StockKind::I,
+            'J' => StockKind::J,
+            'K' => StockKind::K,
+            'L' => StockKind::L,
+            'M' => StockKind::M,
+            'N' => StockKind::N,
+            'O' => StockKind::O,
+            'P' => StockKind::P,
+            'Q' => StockKind::Q,
+            'R' => StockKind::R,
+            'S' => StockKind::S,
+            'T' => StockKind::T,
+            'U' => StockKind::U,
+            'V' => StockKind::V,
+            'W' => StockKind::W,
+            'X' => StockKind::X,
+            'Y' => StockKind::Y,
+            'Z' => StockKind::Z,
+            _ => panic!("Invalid stock kind"),
+        }
+    }
+}
+
+impl ToString for StockKind {
+    fn to_string(&self) -> String {
+        match self {
+            StockKind::A => "A",
+            StockKind::B => "B",
+            StockKind::C => "C",
+            StockKind::D => "D",
+            StockKind::E => "E",
+            StockKind::F => "F",
+            StockKind::G => "G",
+            StockKind::H => "H",
+            StockKind::I => "I",
+            StockKind::J => "J",
+            StockKind::K => "K",
+            StockKind::L => "L",
+            StockKind::M => "M",
+            StockKind::N => "N",
+            StockKind::O => "O",
+            StockKind::P => "P",
+            StockKind::Q => "Q",
+            StockKind::R => "R",
+            StockKind::S => "S",
+            StockKind::T => "T",
+            StockKind::U => "U",
+            StockKind::V => "V",
+            StockKind::W => "W",
+            StockKind::X => "X",
+            StockKind::Y => "Y",
+            StockKind::Z => "Z",
+        }
+        .to_string()
+    }
+}
 
 pub struct Record {
-    stock: char,
+    stock: StockKind,
     open: f64,
     low: f64,
     high: f64,
@@ -19,7 +117,7 @@ impl Record {
         timestamp: NaiveTime,
     ) -> Record {
         Record {
-            stock,
+            stock: StockKind::from_char(stock),
             open,
             low,
             high,
@@ -31,7 +129,7 @@ impl Record {
     pub fn to_column(&self) -> String {
         format!(
             "stock{},{:.2},{:.2},{:.2},{:.2},{}",
-            self.stock,
+            self.stock.to_string(),
             self.open,
             self.low,
             self.high,
