@@ -1,4 +1,5 @@
 use anyhow::Result;
+use chrono::Local;
 use std::env;
 use std::io::{BufReader, Read};
 use std::net::{IpAddr, SocketAddr, TcpStream};
@@ -34,7 +35,13 @@ fn main() -> Result<()> {
             .map(|s| s.to_string())
             .collect::<Vec<String>>();
         println!("Received {} records", new_records.len());
-        new_records.iter().for_each(|r| println!("{}", r));
+        new_records.iter().for_each(|r| {
+            println!(
+                "{}, {}",
+                r,
+                Local::now().naive_local().time().format("%H:%M:%S%.3f")
+            )
+        });
         // new_records.last().map(|r| println!("Last record : {}", r));
         records.extend(new_records);
 

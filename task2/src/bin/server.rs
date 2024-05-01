@@ -17,7 +17,7 @@ fn main() -> Result<()> {
         Ok((stream, addr)) => {
             println!("Accepted connection from {:?}", addr);
 
-            let file = File::open("./task2/data/stock_data.txt")?;
+            let file = File::open("./task2/data/stock_data_without_timestamp.txt")?;
             let file_reader = BufReader::new(file);
 
             let mut stream_writer = BufWriter::new(&stream);
@@ -26,9 +26,10 @@ fn main() -> Result<()> {
             for mut line in file_reader.lines().map(|l| l.expect("Failed to read line")) {
                 line.push_str("\r\n");
                 stream_writer.write_all(line.as_bytes())?;
+                stream_writer.flush()?;
 
                 // 0.01s delay
-                std::thread::sleep(std::time::Duration::from_millis(1));
+                std::thread::sleep(std::time::Duration::from_millis(500));
             }
 
             stream_writer.flush()?;
