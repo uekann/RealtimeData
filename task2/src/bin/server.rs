@@ -28,7 +28,7 @@ fn main() -> Result<()> {
                 stream_writer.write_all(line.as_bytes())?;
                 stream_writer.flush()?;
 
-                // 0.01s delay
+                // 0.5s delay
                 std::thread::sleep(std::time::Duration::from_millis(500));
             }
 
