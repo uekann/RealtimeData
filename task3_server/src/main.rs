@@ -34,9 +34,10 @@ fn main() -> Result<()> {
             for mut line in lines.map(|l| l.expect("Failed to read line")) {
                 line.push_str("\r\n");
                 stream_writer.write_all(line.as_bytes())?;
+                stream_writer.flush()?;
 
                 // 0.01s delay
-                std::thread::sleep(std::time::Duration::from_millis(500));
+                // std::thread::sleep(std::time::Duration::from_millis(500));
             }
 
             stream_writer.flush()?;

@@ -40,6 +40,24 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'task3_client'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=task3_client",
+                    "--package=task3_client"
+                ],
+                "filter": {
+                    "name": "task3_client",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }
