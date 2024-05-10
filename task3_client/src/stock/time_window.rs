@@ -39,4 +39,8 @@ impl Window for TimeWindow {
 
         self.records = self.records.split_off(id);
     }
+
+    fn get_records(&self) -> Vec<Record> {
+        self.records.clone()
+    }
 }

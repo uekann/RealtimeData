@@ -33,4 +33,8 @@ impl Window for CountWindow {
                 .split_off(self.records.len() - self.window_size);
         }
     }
+
+    fn get_records(&self) -> Vec<Record> {
+        self.records.clone()
+    }
 }

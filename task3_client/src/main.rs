@@ -1,11 +1,48 @@
 mod stock;
 
-use crate::stock::record::Record;
 use anyhow::Result;
+use std::collections::HashMap;
 use std::env;
 use std::io::{BufReader, Read};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use std::time::Duration;
+use stock::record::{Record, StockKind};
+
+struct StockInfo {
+    min: f64,
+    max: f64,
+    avg: f64,
+    sd: f64,
+}
+
+fn classify_records(records: Vec<Record>) -> HashMap<StockKind, Vec<Record>> {
+    let mut classified_records: HashMap<StockKind, Vec<Record>> = HashMap::new();
+    for record in records {
+        let key = record.stock.clone();
+        let value = record;
+        classified_records
+            .entry(key)
+            .or_insert(Vec::new())
+            .push(value);
+    }
+    classified_records
+}
+
+fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
+    let mut close_values: Vec<f64> = records.iter().map(|r| r.close).collect();
+    close_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let min = *close_values.first().unwrap();
+    let max = *close_values.last().unwrap();
+    let sum: f64 = close_values.iter().sum();
+    let avg = sum / close_values.len() as f64;
+    let sd = close_values
+        .iter()
+        .map(|v| (v - avg).powi(2))
+        .sum::<f64>()
+        .sqrt()
+        / close_values.len() as f64;
+    StockInfo { min, max, avg, sd }
+}
 
 fn main() -> Result<()> {
     let ip_string = env::var("SERVER_IP")?;

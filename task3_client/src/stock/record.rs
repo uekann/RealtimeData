@@ -1,6 +1,7 @@
-use chrono::NaiveTime;
+use chrono::{Local, NaiveTime};
 use std::string::ToString;
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum StockKind {
     A,
     B,
@@ -62,42 +63,75 @@ impl StockKind {
             _ => panic!("Invalid stock kind"),
         }
     }
+
+    pub fn from_str(s: &str) -> StockKind {
+        match s {
+            "stockA" => StockKind::A,
+            "stockB" => StockKind::B,
+            "stockC" => StockKind::C,
+            "stockD" => StockKind::D,
+            "stockE" => StockKind::E,
+            "stockF" => StockKind::F,
+            "stockG" => StockKind::G,
+            "stockH" => StockKind::H,
+            "stockI" => StockKind::I,
+            "stockJ" => StockKind::J,
+            "stockK" => StockKind::K,
+            "stockL" => StockKind::L,
+            "stockM" => StockKind::M,
+            "stockN" => StockKind::N,
+            "stockO" => StockKind::O,
+            "stockP" => StockKind::P,
+            "stockQ" => StockKind::Q,
+            "stockR" => StockKind::R,
+            "stockS" => StockKind::S,
+            "stockT" => StockKind::T,
+            "stockU" => StockKind::U,
+            "stockV" => StockKind::V,
+            "stockW" => StockKind::W,
+            "stockX" => StockKind::X,
+            "stockY" => StockKind::Y,
+            "stockZ" => StockKind::Z,
+            _ => panic!("Invalid stock kind"),
+        }
+    }
 }
 
 impl ToString for StockKind {
     fn to_string(&self) -> String {
         match self {
-            StockKind::A => "A",
-            StockKind::B => "B",
-            StockKind::C => "C",
-            StockKind::D => "D",
-            StockKind::E => "E",
-            StockKind::F => "F",
-            StockKind::G => "G",
-            StockKind::H => "H",
-            StockKind::I => "I",
-            StockKind::J => "J",
-            StockKind::K => "K",
-            StockKind::L => "L",
-            StockKind::M => "M",
-            StockKind::N => "N",
-            StockKind::O => "O",
-            StockKind::P => "P",
-            StockKind::Q => "Q",
-            StockKind::R => "R",
-            StockKind::S => "S",
-            StockKind::T => "T",
-            StockKind::U => "U",
-            StockKind::V => "V",
-            StockKind::W => "W",
-            StockKind::X => "X",
-            StockKind::Y => "Y",
-            StockKind::Z => "Z",
+            StockKind::A => "stockA",
+            StockKind::B => "stockB",
+            StockKind::C => "stockC",
+            StockKind::D => "stockD",
+            StockKind::E => "stockE",
+            StockKind::F => "stockF",
+            StockKind::G => "stockG",
+            StockKind::H => "stockH",
+            StockKind::I => "stockI",
+            StockKind::J => "stockJ",
+            StockKind::K => "stockK",
+            StockKind::L => "stockL",
+            StockKind::M => "stockM",
+            StockKind::N => "stockN",
+            StockKind::O => "stockO",
+            StockKind::P => "stockP",
+            StockKind::Q => "stockQ",
+            StockKind::R => "stockR",
+            StockKind::S => "stockS",
+            StockKind::T => "stockT",
+            StockKind::U => "stockU",
+            StockKind::V => "stockV",
+            StockKind::W => "stockW",
+            StockKind::X => "stockX",
+            StockKind::Y => "stockY",
+            StockKind::Z => "stockZ",
         }
         .to_string()
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Record {
     pub stock: StockKind,
     pub open: f64,
@@ -109,7 +143,7 @@ pub struct Record {
 
 impl Record {
     pub fn new(
-        stock: char,
+        stock: &str,
         open: f64,
         low: f64,
         high: f64,
@@ -117,7 +151,7 @@ impl Record {
         timestamp: NaiveTime,
     ) -> Record {
         Record {
-            stock: StockKind::from_char(stock),
+            stock: StockKind::from_str(stock),
             open,
             low,
             high,
@@ -128,7 +162,7 @@ impl Record {
 
     pub fn to_column(&self) -> String {
         format!(
-            "stock{},{:.2},{:.2},{:.2},{:.2},{}",
+            "{},{:.2},{:.2},{:.2},{:.2},{}",
             self.stock.to_string(),
             self.open,
             self.low,
@@ -142,12 +176,12 @@ impl Record {
 impl From<&str> for Record {
     fn from(s: &str) -> Record {
         let mut parts = s.split(",");
-        let stock = parts.next().unwrap().chars().last().unwrap();
+        let stock = parts.next().unwrap();
         let open = parts.next().unwrap().parse().unwrap();
         let low = parts.next().unwrap().parse().unwrap();
         let high = parts.next().unwrap().parse().unwrap();
         let close = parts.next().unwrap().parse().unwrap();
-        let timestamp = NaiveTime::parse_from_str(parts.next().unwrap(), "%H:%M:%S%.3f").unwrap();
+        let timestamp = Local::now().naive_local().time();
         Record::new(stock, open, low, high, close, timestamp)
     }
 }

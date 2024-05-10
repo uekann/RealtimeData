@@ -33,16 +33,11 @@ fn main() -> Result<()> {
 
             // Send data to client
             for mut line in lines.map(|l| l.expect("Failed to read line")) {
-                let timestamp = Local::now().naive_local().time();
-                line.push_str(&format!(
-                    ",{}",
-                    timestamp.format("%H:%M:%S%.3f").to_string()
-                ));
                 line.push_str("\r\n");
                 stream_writer.write_all(line.as_bytes())?;
 
                 // 0.01s delay
-                std::thread::sleep(std::time::Duration::from_millis(1));
+                std::thread::sleep(std::time::Duration::from_millis(500));
             }
 
             stream_writer.flush()?;
