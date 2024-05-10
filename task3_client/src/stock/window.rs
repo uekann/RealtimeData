@@ -1,8 +1,22 @@
+use super::record::StockKind;
 use crate::stock::record::Record;
+use std::collections::HashMap;
 
 pub trait Window {
     fn add_record(&mut self, record: Record);
-    fn add_recors(&mut self, records: Vec<Record>);
+    fn add_records(&mut self, records: Vec<Record>);
     fn update(&mut self);
     fn get_records(&self) -> Vec<Record>;
+    fn get_classify_records(&self) -> HashMap<StockKind, Vec<Record>> {
+        let mut classified_records: HashMap<StockKind, Vec<Record>> = HashMap::new();
+        for record in self.get_records() {
+            let key = record.stock.clone();
+            let value = record;
+            classified_records
+                .entry(key)
+                .or_insert(Vec::new())
+                .push(value);
+        }
+        classified_records
+    }
 }

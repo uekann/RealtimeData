@@ -18,12 +18,10 @@ impl CountWindow {
 impl Window for CountWindow {
     fn add_record(&mut self, record: Record) {
         self.records.push(record);
-        self.update();
     }
 
-    fn add_recors(&mut self, records: Vec<Record>) {
+    fn add_records(&mut self, records: Vec<Record>) {
         self.records.extend(records);
-        self.update();
     }
 
     fn update(&mut self) {

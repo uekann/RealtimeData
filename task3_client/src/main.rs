@@ -1,48 +1,14 @@
+mod data_holder;
 mod stock;
 
 use anyhow::Result;
-use std::collections::HashMap;
+use data_holder::DataHolder;
 use std::env;
 use std::io::{BufReader, Read};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use std::time::Duration;
-use stock::record::{Record, StockKind};
-
-struct StockInfo {
-    min: f64,
-    max: f64,
-    avg: f64,
-    sd: f64,
-}
-
-fn classify_records(records: Vec<Record>) -> HashMap<StockKind, Vec<Record>> {
-    let mut classified_records: HashMap<StockKind, Vec<Record>> = HashMap::new();
-    for record in records {
-        let key = record.stock.clone();
-        let value = record;
-        classified_records
-            .entry(key)
-            .or_insert(Vec::new())
-            .push(value);
-    }
-    classified_records
-}
-
-fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
-    let mut close_values: Vec<f64> = records.iter().map(|r| r.close).collect();
-    close_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    let min = *close_values.first().unwrap();
-    let max = *close_values.last().unwrap();
-    let sum: f64 = close_values.iter().sum();
-    let avg = sum / close_values.len() as f64;
-    let sd = close_values
-        .iter()
-        .map(|v| (v - avg).powi(2))
-        .sum::<f64>()
-        .sqrt()
-        / close_values.len() as f64;
-    StockInfo { min, max, avg, sd }
-}
+use stock::record::Record;
+use stock::{count_window::CountWindow, time_window::TimeWindow};
 
 fn main() -> Result<()> {
     let ip_string = env::var("SERVER_IP")?;
@@ -53,7 +19,8 @@ fn main() -> Result<()> {
     let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(5))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    let mut records: Vec<Record> = Vec::new();
+    let window = CountWindow::new(100);
+    let mut data_holder = DataHolder::new(Box::new(window));
 
     let mut buffer = Vec::new();
     loop {
@@ -74,16 +41,18 @@ fn main() -> Result<()> {
             .map(|s| s.into())
             .collect::<Vec<Record>>();
 
-        println!("Received {} records", new_records.len());
-        new_records
-            .iter()
-            .for_each(|r| println!("{}", r.to_column()));
+        data_holder.add_records(new_records);
+        data_holder.update();
 
-        records.extend(new_records);
+        let info = data_holder.get_info()?;
+
+        println!("New data received");
+        for (stock_kind, stock_info) in info {
+            println!("{}: {}", stock_kind.to_string(), stock_info.to_string());
+        }
 
         buffer = buffer[last_crlf + 2..].to_vec();
     }
 
-    println!("Received {} records in total", records.len());
     Ok(())
 }
