@@ -2,13 +2,18 @@ use crate::stock::record::Record;
 use crate::stock::window::Window;
 
 pub struct CountWindow {
+    slide_size: usize,
     window_size: usize,
     records: Vec<Record>,
+    update_flag: bool,
 }
 
 impl CountWindow {
-    pub fn new(window_size: usize) -> CountWindow {
+    #[allow(dead_code)]
+    pub fn new(slide_size: usize, window_size: usize) -> CountWindow {
         CountWindow {
+            update_flag: false,
+            slide_size,
             window_size,
             records: Vec::new(),
         }
@@ -25,15 +30,21 @@ impl Window for CountWindow {
     }
 
     fn update(&mut self) {
-        if self.records.len() > self.window_size {
+        if (self.records.len() as i64) - (self.window_size as i64) >= self.slide_size as i64 {
             self.records = self
                 .records
                 .split_off(self.records.len() - self.window_size);
+            self.update_flag = true;
         }
     }
 
-    fn get_records(&self) -> Vec<Record> {
-        self.records.clone()
+    fn is_updated(&self) -> bool {
+        self.update_flag || self.records.len() < self.window_size
+    }
+
+    fn get_records(&mut self) -> Vec<Record> {
+        self.update_flag = false;
+        self.records[..std::cmp::min(self.window_size, self.records.len())].to_vec()
     }
 }
 
@@ -41,12 +52,11 @@ impl Window for CountWindow {
 mod test {
     use super::*;
     use crate::stock::record::StockKind;
-    use chrono::NaiveDateTime;
     use std::collections::HashMap;
 
     #[test]
     fn test_count_window() {
-        let mut window = CountWindow::new(3);
+        let mut window = CountWindow::new(1, 3);
         let record1 = Record::from("stockA,1.0,1.0,1.0,1.0");
         let record2 = Record::from("stockA,2.0,2.0,2.0,2.0");
         let record3 = Record::from("stockA,3.0,3.0,3.0,3.0");
@@ -79,7 +89,7 @@ mod test {
 
     #[test]
     fn test_count_window_with_different_stock() {
-        let mut window = CountWindow::new(3);
+        let mut window = CountWindow::new(1, 3);
         let record1 = Record::from("stockA,1.0,1.0,1.0,1.0");
         let record2 = Record::from("stockB,2.0,2.0,2.0,2.0");
         let record3 = Record::from("stockA,3.0,3.0,3.0,3.0");

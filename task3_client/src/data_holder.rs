@@ -13,7 +13,7 @@ pub struct StockInfo {
 impl ToString for StockInfo {
     fn to_string(&self) -> String {
         format!(
-            "min: {:.2}, max: {:.2}, avg: {:.2}, sd: {:.2}",
+            "Min: {:.1}, Max: {:.1}, Average: {:.1}, Std: {:.1}",
             self.min, self.max, self.avg, self.sd
         )
     }
@@ -56,7 +56,11 @@ impl DataHolder {
         self.window.update();
     }
 
-    pub fn get_info(&self) -> Result<HashMap<StockKind, StockInfo>> {
+    pub fn is_updated(&mut self) -> bool {
+        self.window.is_updated()
+    }
+
+    pub fn get_info(&mut self) -> Result<HashMap<StockKind, StockInfo>> {
         let classified_records = self.window.get_classify_records();
         let mut stock_info: HashMap<StockKind, StockInfo> = HashMap::new();
         for (stock_kind, records) in classified_records {
@@ -64,5 +68,9 @@ impl DataHolder {
             stock_info.insert(stock_kind, info);
         }
         Ok(stock_info)
+    }
+
+    pub fn get_records(&mut self) -> Vec<Record> {
+        self.window.get_records()
     }
 }

@@ -19,7 +19,7 @@ fn main() -> Result<()> {
             println!("Accepted connection from {:?}", addr);
 
             // Open file and send data to client
-            let file = File::open("./task3_server/data/stock_data_without_timestamp.txt")?;
+            let file = File::open("./sample/StockData_Simulation.txt")?;
             let file_reader = BufReader::new(file);
 
             let mut stream_writer = BufWriter::new(&stream);

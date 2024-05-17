@@ -1,7 +1,7 @@
 use chrono::{Local, NaiveTime};
 use std::string::ToString;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Copy)]
 pub enum StockKind {
     A,
     B,
@@ -32,100 +32,132 @@ pub enum StockKind {
 }
 
 impl StockKind {
-    pub fn from_char(c: char) -> StockKind {
-        match c {
-            'A' => StockKind::A,
-            'B' => StockKind::B,
-            'C' => StockKind::C,
-            'D' => StockKind::D,
-            'E' => StockKind::E,
-            'F' => StockKind::F,
-            'G' => StockKind::G,
-            'H' => StockKind::H,
-            'I' => StockKind::I,
-            'J' => StockKind::J,
-            'K' => StockKind::K,
-            'L' => StockKind::L,
-            'M' => StockKind::M,
-            'N' => StockKind::N,
-            'O' => StockKind::O,
-            'P' => StockKind::P,
-            'Q' => StockKind::Q,
-            'R' => StockKind::R,
-            'S' => StockKind::S,
-            'T' => StockKind::T,
-            'U' => StockKind::U,
-            'V' => StockKind::V,
-            'W' => StockKind::W,
-            'X' => StockKind::X,
-            'Y' => StockKind::Y,
-            'Z' => StockKind::Z,
-            _ => panic!("Invalid stock kind"),
-        }
-    }
+    // pub fn from_str(s: &str) -> StockKind {
+    //     match s {
+    //         "stockA" => StockKind::A,
+    //         "stockB" => StockKind::B,
+    //         "stockC" => StockKind::C,
+    //         "stockD" => StockKind::D,
+    //         "stockE" => StockKind::E,
+    //         "stockF" => StockKind::F,
+    //         "stockG" => StockKind::G,
+    //         "stockH" => StockKind::H,
+    //         "stockI" => StockKind::I,
+    //         "stockJ" => StockKind::J,
+    //         "stockK" => StockKind::K,
+    //         "stockL" => StockKind::L,
+    //         "stockM" => StockKind::M,
+    //         "stockN" => StockKind::N,
+    //         "stockO" => StockKind::O,
+    //         "stockP" => StockKind::P,
+    //         "stockQ" => StockKind::Q,
+    //         "stockR" => StockKind::R,
+    //         "stockS" => StockKind::S,
+    //         "stockT" => StockKind::T,
+    //         "stockU" => StockKind::U,
+    //         "stockV" => StockKind::V,
+    //         "stockW" => StockKind::W,
+    //         "stockX" => StockKind::X,
+    //         "stockY" => StockKind::Y,
+    //         "stockZ" => StockKind::Z,
+    //         _ => panic!("Invalid stock kind"),
+    //     }
+    // }
 
     pub fn from_str(s: &str) -> StockKind {
         match s {
-            "stockA" => StockKind::A,
-            "stockB" => StockKind::B,
-            "stockC" => StockKind::C,
-            "stockD" => StockKind::D,
-            "stockE" => StockKind::E,
-            "stockF" => StockKind::F,
-            "stockG" => StockKind::G,
-            "stockH" => StockKind::H,
-            "stockI" => StockKind::I,
-            "stockJ" => StockKind::J,
-            "stockK" => StockKind::K,
-            "stockL" => StockKind::L,
-            "stockM" => StockKind::M,
-            "stockN" => StockKind::N,
-            "stockO" => StockKind::O,
-            "stockP" => StockKind::P,
-            "stockQ" => StockKind::Q,
-            "stockR" => StockKind::R,
-            "stockS" => StockKind::S,
-            "stockT" => StockKind::T,
-            "stockU" => StockKind::U,
-            "stockV" => StockKind::V,
-            "stockW" => StockKind::W,
-            "stockX" => StockKind::X,
-            "stockY" => StockKind::Y,
-            "stockZ" => StockKind::Z,
+            "株A" => StockKind::A,
+            "株B" => StockKind::B,
+            "株C" => StockKind::C,
+            "株D" => StockKind::D,
+            "株E" => StockKind::E,
+            "株F" => StockKind::F,
+            "株G" => StockKind::G,
+            "株H" => StockKind::H,
+            "株I" => StockKind::I,
+            "株J" => StockKind::J,
+            "株K" => StockKind::K,
+            "株L" => StockKind::L,
+            "株M" => StockKind::M,
+            "株N" => StockKind::N,
+            "株O" => StockKind::O,
+            "株P" => StockKind::P,
+            "株Q" => StockKind::Q,
+            "株R" => StockKind::R,
+            "株S" => StockKind::S,
+            "株T" => StockKind::T,
+            "株U" => StockKind::U,
+            "株V" => StockKind::V,
+            "株W" => StockKind::W,
+            "株X" => StockKind::X,
+            "株Y" => StockKind::Y,
+            "株Z" => StockKind::Z,
             _ => panic!("Invalid stock kind"),
         }
     }
 }
 
 impl ToString for StockKind {
+    // fn to_string(&self) -> String {
+    //     match self {
+    //         StockKind::A => "stockA",
+    //         StockKind::B => "stockB",
+    //         StockKind::C => "stockC",
+    //         StockKind::D => "stockD",
+    //         StockKind::E => "stockE",
+    //         StockKind::F => "stockF",
+    //         StockKind::G => "stockG",
+    //         StockKind::H => "stockH",
+    //         StockKind::I => "stockI",
+    //         StockKind::J => "stockJ",
+    //         StockKind::K => "stockK",
+    //         StockKind::L => "stockL",
+    //         StockKind::M => "stockM",
+    //         StockKind::N => "stockN",
+    //         StockKind::O => "stockO",
+    //         StockKind::P => "stockP",
+    //         StockKind::Q => "stockQ",
+    //         StockKind::R => "stockR",
+    //         StockKind::S => "stockS",
+    //         StockKind::T => "stockT",
+    //         StockKind::U => "stockU",
+    //         StockKind::V => "stockV",
+    //         StockKind::W => "stockW",
+    //         StockKind::X => "stockX",
+    //         StockKind::Y => "stockY",
+    //         StockKind::Z => "stockZ",
+    //     }
+    //     .to_string()
+    // }
+
     fn to_string(&self) -> String {
         match self {
-            StockKind::A => "stockA",
-            StockKind::B => "stockB",
-            StockKind::C => "stockC",
-            StockKind::D => "stockD",
-            StockKind::E => "stockE",
-            StockKind::F => "stockF",
-            StockKind::G => "stockG",
-            StockKind::H => "stockH",
-            StockKind::I => "stockI",
-            StockKind::J => "stockJ",
-            StockKind::K => "stockK",
-            StockKind::L => "stockL",
-            StockKind::M => "stockM",
-            StockKind::N => "stockN",
-            StockKind::O => "stockO",
-            StockKind::P => "stockP",
-            StockKind::Q => "stockQ",
-            StockKind::R => "stockR",
-            StockKind::S => "stockS",
-            StockKind::T => "stockT",
-            StockKind::U => "stockU",
-            StockKind::V => "stockV",
-            StockKind::W => "stockW",
-            StockKind::X => "stockX",
-            StockKind::Y => "stockY",
-            StockKind::Z => "stockZ",
+            StockKind::A => "株A",
+            StockKind::B => "株B",
+            StockKind::C => "株C",
+            StockKind::D => "株D",
+            StockKind::E => "株E",
+            StockKind::F => "株F",
+            StockKind::G => "株G",
+            StockKind::H => "株H",
+            StockKind::I => "株I",
+            StockKind::J => "株J",
+            StockKind::K => "株K",
+            StockKind::L => "株L",
+            StockKind::M => "株M",
+            StockKind::N => "株N",
+            StockKind::O => "株O",
+            StockKind::P => "株P",
+            StockKind::Q => "株Q",
+            StockKind::R => "株R",
+            StockKind::S => "株S",
+            StockKind::T => "株T",
+            StockKind::U => "株U",
+            StockKind::V => "株V",
+            StockKind::W => "株W",
+            StockKind::X => "株X",
+            StockKind::Y => "株Y",
+            StockKind::Z => "株Z",
         }
         .to_string()
     }
@@ -159,18 +191,6 @@ impl Record {
             timestamp,
         }
     }
-
-    pub fn to_column(&self) -> String {
-        format!(
-            "{},{:.2},{:.2},{:.2},{:.2},{}",
-            self.stock.to_string(),
-            self.open,
-            self.low,
-            self.high,
-            self.close,
-            self.timestamp.format("%H:%M:%S%.3f").to_string()
-        )
-    }
 }
 
 impl From<&str> for Record {
@@ -186,39 +206,22 @@ impl From<&str> for Record {
     }
 }
 
+impl ToString for Record {
+    fn to_string(&self) -> String {
+        format!(
+            "{},{:.2},{:.2},{:.2},{:.2}",
+            self.stock.to_string(),
+            self.open,
+            self.low,
+            self.high,
+            self.close,
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_stock_kind_from_char() {
-        assert_eq!(StockKind::from_char('A'), StockKind::A);
-        assert_eq!(StockKind::from_char('B'), StockKind::B);
-        assert_eq!(StockKind::from_char('C'), StockKind::C);
-        assert_eq!(StockKind::from_char('D'), StockKind::D);
-        assert_eq!(StockKind::from_char('E'), StockKind::E);
-        assert_eq!(StockKind::from_char('F'), StockKind::F);
-        assert_eq!(StockKind::from_char('G'), StockKind::G);
-        assert_eq!(StockKind::from_char('H'), StockKind::H);
-        assert_eq!(StockKind::from_char('I'), StockKind::I);
-        assert_eq!(StockKind::from_char('J'), StockKind::J);
-        assert_eq!(StockKind::from_char('K'), StockKind::K);
-        assert_eq!(StockKind::from_char('L'), StockKind::L);
-        assert_eq!(StockKind::from_char('M'), StockKind::M);
-        assert_eq!(StockKind::from_char('N'), StockKind::N);
-        assert_eq!(StockKind::from_char('O'), StockKind::O);
-        assert_eq!(StockKind::from_char('P'), StockKind::P);
-        assert_eq!(StockKind::from_char('Q'), StockKind::Q);
-        assert_eq!(StockKind::from_char('R'), StockKind::R);
-        assert_eq!(StockKind::from_char('S'), StockKind::S);
-        assert_eq!(StockKind::from_char('T'), StockKind::T);
-        assert_eq!(StockKind::from_char('U'), StockKind::U);
-        assert_eq!(StockKind::from_char('V'), StockKind::V);
-        assert_eq!(StockKind::from_char('W'), StockKind::W);
-        assert_eq!(StockKind::from_char('X'), StockKind::X);
-        assert_eq!(StockKind::from_char('Y'), StockKind::Y);
-        assert_eq!(StockKind::from_char('Z'), StockKind::Z);
-    }
 
     #[test]
     fn test_stock_kind_from_str() {
@@ -288,14 +291,17 @@ mod tests {
             2.0,
             3.0,
             4.0,
-            NaiveTime::from_hms(12, 34, 56),
+            NaiveTime::from_hms_opt(12, 34, 56).unwrap(),
         );
         assert_eq!(record.stock, StockKind::A);
         assert_eq!(record.open, 1.0);
         assert_eq!(record.low, 2.0);
         assert_eq!(record.high, 3.0);
         assert_eq!(record.close, 4.0);
-        assert_eq!(record.timestamp, NaiveTime::from_hms(12, 34, 56));
+        assert_eq!(
+            record.timestamp,
+            NaiveTime::from_hms_opt(12, 34, 56).unwrap()
+        );
     }
 
     #[test]
@@ -306,12 +312,9 @@ mod tests {
             2.0,
             3.0,
             4.0,
-            NaiveTime::from_hms(12, 34, 56),
+            NaiveTime::from_hms_opt(12, 34, 56).unwrap(),
         );
-        assert_eq!(
-            record.to_column(),
-            "stockA,1.00,2.00,3.00,4.00,12:34:56.000"
-        );
+        assert_eq!(record.to_string(), "stockA,1.00,2.00,3.00,4.00");
     }
 
     #[test]

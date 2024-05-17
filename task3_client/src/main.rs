@@ -2,13 +2,20 @@ mod data_holder;
 mod stock;
 
 use anyhow::Result;
+#[allow(unused_imports)]
+use chrono::Duration as ChronoDuration;
 use data_holder::DataHolder;
 use std::env;
 use std::io::{BufReader, Read};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use std::time::Duration;
 use stock::record::Record;
+
+#[allow(unused_imports)]
 use stock::{count_window::CountWindow, time_window::TimeWindow};
+
+use crate::data_holder::StockInfo;
+use crate::stock::record::StockKind;
 
 fn main() -> Result<()> {
     let ip_string = env::var("SERVER_IP")?;
@@ -19,7 +26,11 @@ fn main() -> Result<()> {
     let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(5))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    let window = CountWindow::new(100);
+    // let window = CountWindow::new(10, 100);
+    let window = TimeWindow::new(
+        ChronoDuration::milliseconds(10),
+        ChronoDuration::milliseconds(100),
+    );
     let mut data_holder = DataHolder::new(Box::new(window));
 
     let mut buffer = Vec::new();
@@ -44,11 +55,28 @@ fn main() -> Result<()> {
         data_holder.add_records(new_records);
         data_holder.update();
 
-        let info = data_holder.get_info()?;
-
-        println!("New data received");
-        for (stock_kind, stock_info) in info {
-            println!("{}: {}", stock_kind.to_string(), stock_info.to_string());
+        if data_holder.is_updated() {
+            println!("----- Current window contents -----");
+            let records = data_holder.get_records();
+            for record in records {
+                println!(
+                    "[{}] {}",
+                    record.timestamp.format("%H:%M:%S%.3f"),
+                    record.to_string()
+                );
+            }
+            println!("----- Result in the window -----");
+            let info_data = data_holder.get_info()?;
+            let mut info = info_data.iter().collect::<Vec<(&StockKind, &StockInfo)>>();
+            info.sort_by_key(|(k, _)| -> StockKind { **k });
+            for (stock_kind, stock_info) in info {
+                println!(
+                    "Stock name: {}, {}",
+                    stock_kind.to_string(),
+                    stock_info.to_string()
+                );
+            }
+            println!("===== End of the window =====\n");
         }
 
         buffer = buffer[last_crlf + 2..].to_vec();
