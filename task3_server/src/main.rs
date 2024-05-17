@@ -37,7 +37,7 @@ fn main() -> Result<()> {
                 stream_writer.flush()?;
 
                 // 0.01s delay
-                // std::thread::sleep(std::time::Duration::from_millis(500));
+                std::thread::sleep(std::time::Duration::from_millis(1));
             }
 
             stream_writer.flush()?;
