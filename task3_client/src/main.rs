@@ -23,14 +23,14 @@ fn main() -> Result<()> {
 
     let server_address = SocketAddr::new(IpAddr::V4(ip_string.parse()?), port_number);
 
-    let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(5))?;
+    let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(10))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    // let window = CountWindow::new(10, 100);
-    let window = TimeWindow::new(
-        ChronoDuration::milliseconds(10),
-        ChronoDuration::milliseconds(100),
-    );
+    let window = CountWindow::new(2, 10);
+    // let window = TimeWindow::new(
+    //     ChronoDuration::milliseconds(10),
+    //     ChronoDuration::milliseconds(100),
+    // );
     let mut data_holder = DataHolder::new(Box::new(window));
 
     let mut buffer = Vec::new();
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
             println!("----- Result in the window -----");
             let info_data = data_holder.get_info()?;
             let mut info = info_data.iter().collect::<Vec<(&StockKind, &StockInfo)>>();
-            info.sort_by_key(|(k, _)| -> StockKind { **k });
+            info.sort_by_key(|(k, _)|  **k );
             for (stock_kind, stock_info) in info {
                 println!(
                     "Stock name: {}, {}",
