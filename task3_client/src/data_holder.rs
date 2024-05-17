@@ -7,14 +7,14 @@ pub struct StockInfo {
     min: f64,
     max: f64,
     avg: f64,
-    sd: f64,
+    std: f64,
 }
 
 impl ToString for StockInfo {
     fn to_string(&self) -> String {
         format!(
             "Min: {:.1}, Max: {:.1}, Average: {:.1}, Std: {:.1}",
-            self.min, self.max, self.avg, self.sd
+            self.min, self.max, self.avg, self.std
         )
     }
 }
@@ -43,13 +43,13 @@ impl DataHolder {
         let max = *close_values.last().unwrap();
         let sum: f64 = close_values.iter().sum();
         let avg = sum / close_values.len() as f64;
-        let sd = close_values
+        let std = close_values
             .iter()
             .map(|v| (v - avg).powi(2))
             .sum::<f64>()
             .sqrt()
             / close_values.len() as f64;
-        StockInfo { min, max, avg, sd }
+        StockInfo { min, max, avg, std }
     }
 
     pub fn update(&mut self) {
