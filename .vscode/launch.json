@@ -25,25 +25,6 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'task1'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=task1",
-                    "--package=task1"
-                ],
-                "filter": {
-                    "name": "task1",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
             "name": "Debug executable 'task3_client'",
             "cargo": {
                 "args": [
@@ -57,7 +38,9 @@
                 }
             },
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "run_task3_server",
+            "postDebugTask": "stop_task3_server"
         },
     ]
 }
