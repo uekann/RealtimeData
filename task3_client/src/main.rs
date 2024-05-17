@@ -29,7 +29,7 @@ fn main() -> Result<()> {
             break;
         }
 
-        buffer.extend_from_slice(&tmp_buffer);
+        buffer.extend(tmp_buffer.iter().filter(|&&x| x != 0));
 
         let buffer_string = String::from_utf8_lossy(&buffer);
         let last_crlf = match buffer_string.rfind("\r\n") {
