@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "command",
+            "name": "Start task3 server",
+            "program": "/bin/zsh",
+            "args": [
+                "./task3_server/start_server.sh"
+            ],
+        },
+    ]
+}

@@ -5,7 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/task1/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/task2/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/task3_client/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/task3_server/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/server/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/task4_client/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/task4_server/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
