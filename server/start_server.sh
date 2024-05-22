@@ -1,6 +1,6 @@
 export $(cat ./.env)
 echo "Starting server..."
-cargo run --color=always --bin=task3_server --package=task3_server > ./server.log 2>&1 &
+cargo run --color=always --bin=server --package=server > ./server.log 2>&1 &
 
 # バックグラウンドプロセスのPIDを取得
 SERVER_PID=$!

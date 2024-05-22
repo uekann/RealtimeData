@@ -209,6 +209,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -238,14 +246,6 @@ dependencies = [
 
 [[package]]
 name = "task3_client"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
-]
-
-[[package]]
-name = "task3_server"
 version = "0.1.0"
 dependencies = [
  "anyhow",
