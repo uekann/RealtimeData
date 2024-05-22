@@ -6,8 +6,8 @@ use std::net::{IpAddr, SocketAddr, TcpStream};
 use std::time::Duration;
 
 fn main() -> Result<()> {
-    let ip_string = env::var("SERVER_IP")?;
-    let port_number = env::var("SERVER_PORT")?.parse::<u16>()?;
+    let ip_string = env::var("STREAM_SERVER_IP")?;
+    let port_number = env::var("STREAM_SERVER_PORT")?.parse::<u16>()?;
 
     let server_address = SocketAddr::new(IpAddr::V4(ip_string.parse()?), port_number);
 

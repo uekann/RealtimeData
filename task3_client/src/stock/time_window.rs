@@ -1,19 +1,18 @@
-use crate::stock::record::Record;
 use crate::stock::window::Window;
 use chrono::{Duration, Local, NaiveTime};
 
-pub struct TimeWindow {
+pub struct TimeWindow<T: Clone> {
     slied_size: Duration,
     window_size: Duration,
-    records: Vec<Record>,
+    records: Vec<(NaiveTime, T)>,
     update_flag: bool,
     window_length: usize,
     last_update_time: NaiveTime,
 }
 
-impl TimeWindow {
+impl<T: Clone> TimeWindow<T> {
     #[allow(dead_code)]
-    pub fn new(slied_size: Duration, window_size: Duration) -> TimeWindow {
+    pub fn new(slied_size: Duration, window_size: Duration) -> TimeWindow<T> {
         TimeWindow {
             slied_size,
             window_size,
@@ -27,18 +26,19 @@ impl TimeWindow {
     fn binary_search(&self, timestamp: NaiveTime) -> usize {
         self.records
             .as_slice()
-            .binary_search_by_key(&timestamp, |r| r.timestamp)
+            .binary_search_by_key(&timestamp, |(t, _)| *t)
             .map_or_else(|e| e, |i| i)
     }
 }
 
-impl Window for TimeWindow {
-    fn add_record(&mut self, record: Record) {
-        self.records.push(record);
+impl<T: Clone> Window<T> for TimeWindow<T> {
+    fn add_record(&mut self, record: T, timestamp: NaiveTime) {
+        self.records.push((timestamp, record));
     }
 
-    fn add_records(&mut self, records: Vec<Record>) {
-        self.records.extend(records);
+    fn add_records(&mut self, records: Vec<T>, timestamps: NaiveTime) {
+        self.records
+            .extend(records.into_iter().map(|r| (timestamps, r)));
     }
 
     fn update(&mut self) {
@@ -48,7 +48,7 @@ impl Window for TimeWindow {
             self.records = self.records.split_off(id);
             self.update_flag = true;
             self.window_length = self.records.len();
-            self.last_update_time = self.records.last().unwrap().timestamp;
+            self.last_update_time = self.records.last().unwrap().0;
         }
     }
 
@@ -56,7 +56,7 @@ impl Window for TimeWindow {
         self.update_flag
     }
 
-    fn get_records(&mut self) -> Vec<Record> {
+    fn get_records(&mut self) -> Vec<(NaiveTime, T)> {
         self.update_flag = false;
         self.records[..self.window_length].to_vec()
     }

@@ -1,5 +1,5 @@
 use crate::stock::record::{Record, StockKind};
-use crate::stock::window::Window;
+use crate::window::window::Window;
 use anyhow::Result;
 use chrono::{Local, NaiveTime};
 use std::collections::HashMap;

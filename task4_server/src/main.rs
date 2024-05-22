@@ -1,5 +1,6 @@
 mod data_holder;
 mod stock;
+mod window;
 
 use anyhow::Result;
 #[allow(unused_imports)]
@@ -12,7 +13,7 @@ use std::time::Duration;
 use stock::record::Record;
 
 #[allow(unused_imports)]
-use stock::{count_window::CountWindow, time_window::TimeWindow};
+use window::{count_window::CountWindow, time_window::TimeWindow};
 
 use crate::data_holder::StockInfo;
 use crate::stock::record::StockKind;
@@ -26,8 +27,8 @@ fn main() -> Result<()> {
     let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(10))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    let window = CountWindow::new(2, 10);
-    // let window = TimeWindow::new(ChronoDuration::seconds(2), ChronoDuration::seconds(5));
+    // let window = CountWindow::new(2, 10);
+    let window = TimeWindow::new(ChronoDuration::seconds(2), ChronoDuration::seconds(5));
     let mut data_holder = DataHolder::new(Box::new(window));
 
     let mut buffer = Vec::new();

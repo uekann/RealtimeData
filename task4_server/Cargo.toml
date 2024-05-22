@@ -1,5 +1,5 @@
 [package]
-name = "task4_client"
+name = "task4_server"
 version = "0.1.0"
 edition = "2021"
 

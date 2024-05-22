@@ -1,6 +1,6 @@
 use chrono::NaiveTime;
 
-use crate::stock::window::Window;
+use crate::window::window::Window;
 
 pub struct CountWindow<T: Clone> {
     slide_size: usize,
