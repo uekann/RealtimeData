@@ -2,13 +2,13 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "run_task3_server",
+			"label": "run_stream_server",
 			"type": "shell",
 			"command": "cargo",
 			"args": [
 				"run",
-				"--bin=task3_server",
-				"--package=task3_server"
+				"--bin=server",
+				"--package=server"
 			],
 			"group": {
 				"kind": "build",
@@ -35,12 +35,12 @@
 			"isBackground": true
 		},
 		{
-			"label": "stop_task3_server",
+			"label": "stop_stream_server",
 			"type": "shell",
 			"command": "pkill",
 			"args": [
 				"-f",
-				"task3_server"
+				"server"
 			],
 			"group": {
 				"kind": "test",

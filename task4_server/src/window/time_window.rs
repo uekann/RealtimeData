@@ -23,7 +23,7 @@ impl<T: Clone> TimeWindow<T> {
         }
     }
 
-    fn binary_search(&self, timestamp: NaiveTime) -> usize {
+    async fn binary_search(&self, timestamp: NaiveTime) -> usize {
         self.records
             .as_slice()
             .binary_search_by_key(&timestamp, |(t, _)| *t)
@@ -32,19 +32,21 @@ impl<T: Clone> TimeWindow<T> {
 }
 
 impl<T: Clone> Window<T> for TimeWindow<T> {
-    fn add_record(&mut self, record: T, timestamp: NaiveTime) {
+    async fn add_record(&mut self, record: T, timestamp: NaiveTime) {
         self.records.push((timestamp, record));
     }
 
-    fn add_records(&mut self, records: Vec<T>, timestamps: NaiveTime) {
+    async fn add_records(&mut self, records: Vec<T>, timestamps: NaiveTime) {
         self.records
             .extend(records.into_iter().map(|r| (timestamps, r)));
     }
 
-    fn update(&mut self) {
+    async fn update(&mut self) {
         let now = Local::now().time();
         if now - self.last_update_time > self.slied_size {
-            let id = self.binary_search(Local::now().time() - self.window_size);
+            let id = self
+                .binary_search(Local::now().time() - self.window_size)
+                .await;
             self.records = self.records.split_off(id);
             self.update_flag = true;
             self.window_length = self.records.len();
@@ -52,11 +54,11 @@ impl<T: Clone> Window<T> for TimeWindow<T> {
         }
     }
 
-    fn is_updated(&self) -> bool {
+    async fn is_updated(&self) -> bool {
         self.update_flag
     }
 
-    fn get_records(&mut self) -> Vec<(NaiveTime, T)> {
+    async fn get_records(&mut self) -> Vec<(NaiveTime, T)> {
         self.update_flag = false;
         self.records[..self.window_length].to_vec()
     }

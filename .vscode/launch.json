@@ -39,8 +39,28 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "run_task3_server",
-            "postDebugTask": "stop_task3_server"
+            "preLaunchTask": "run_stream_server",
+            "postDebugTask": "stop_stream_server"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'task4_server'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=task4_server",
+                    "--package=task4_server"
+                ],
+                "filter": {
+                    "name": "task4_server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "run_stream_server",
+            // "postDebugTask": "stop_stream_server"
         },
     ]
 }

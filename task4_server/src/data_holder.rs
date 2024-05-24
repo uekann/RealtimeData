@@ -20,27 +20,29 @@ impl ToString for StockInfo {
     }
 }
 
-pub struct DataHolder {
-    window: Box<dyn Window<Record>>,
+pub struct DataHolder<W: Window<Record>> {
+    window: W,
 }
 
 #[allow(dead_code)]
-impl DataHolder {
-    pub fn new(window: Box<dyn Window<Record>>) -> DataHolder {
+impl<W: Window<Record>> DataHolder<W> {
+    pub fn new(window: W) -> DataHolder<W> {
         DataHolder { window }
     }
 
-    pub fn add_record(&mut self, record: Record) {
+    pub async fn add_record(&mut self, record: Record) {
         self.window
-            .add_record(record, Local::now().naive_local().time());
+            .add_record(record, Local::now().naive_local().time())
+            .await;
     }
 
-    pub fn add_records(&mut self, records: Vec<Record>) {
+    pub async fn add_records(&mut self, records: Vec<Record>) {
         self.window
-            .add_records(records, Local::now().naive_local().time());
+            .add_records(records, Local::now().naive_local().time())
+            .await;
     }
 
-    fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
+    async fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
         let mut close_values: Vec<f64> = records.iter().map(|r| r.close).collect();
         close_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let min = *close_values.first().unwrap();
@@ -56,16 +58,16 @@ impl DataHolder {
         StockInfo { min, max, avg, std }
     }
 
-    pub fn update(&mut self) {
-        self.window.update();
+    pub async fn update(&mut self) {
+        self.window.update().await;
     }
 
-    pub fn is_updated(&mut self) -> bool {
-        self.window.is_updated()
+    pub async fn is_updated(&mut self) -> bool {
+        self.window.is_updated().await
     }
 
-    pub fn get_info(&mut self) -> Result<HashMap<StockKind, StockInfo>> {
-        let records = self.window.get_records();
+    pub async fn get_info(&mut self) -> Result<HashMap<StockKind, StockInfo>> {
+        let records = self.window.get_records().await;
         let mut classified_records = HashMap::new();
         for record in records {
             let key = record.1.stock.clone();
@@ -77,13 +79,13 @@ impl DataHolder {
         }
         let mut stock_info: HashMap<StockKind, StockInfo> = HashMap::new();
         for (stock_kind, records) in classified_records {
-            let info = Self::get_info_of_close_value(records);
+            let info = Self::get_info_of_close_value(records).await;
             stock_info.insert(stock_kind, info);
         }
         Ok(stock_info)
     }
 
-    pub fn get_records(&mut self) -> Vec<(NaiveTime, Record)> {
-        self.window.get_records()
+    pub async fn get_records(&mut self) -> Vec<(NaiveTime, Record)> {
+        self.window.get_records().await
     }
 }
