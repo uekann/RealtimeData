@@ -2,7 +2,7 @@ use crate::stock::window::Window;
 use chrono::{Duration, Local, NaiveTime};
 
 pub struct TimeWindow<T: Clone> {
-    slied_size: Duration,
+    slide_size: Duration,
     window_size: Duration,
     records: Vec<(NaiveTime, T)>,
     update_flag: bool,
@@ -12,9 +12,9 @@ pub struct TimeWindow<T: Clone> {
 
 impl<T: Clone> TimeWindow<T> {
     #[allow(dead_code)]
-    pub fn new(slied_size: Duration, window_size: Duration) -> TimeWindow<T> {
+    pub fn new(slide_size: Duration, window_size: Duration) -> TimeWindow<T> {
         TimeWindow {
-            slied_size,
+            slide_size,
             window_size,
             records: Vec::new(),
             update_flag: false,
@@ -43,7 +43,7 @@ impl<T: Clone> Window<T> for TimeWindow<T> {
 
     fn update(&mut self) {
         let now = Local::now().time();
-        if now - self.last_update_time > self.slied_size {
+        if now - self.last_update_time > self.slide_size {
             let id = self.binary_search(Local::now().time() - self.window_size);
             self.records = self.records.split_off(id);
             self.update_flag = true;
