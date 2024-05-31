@@ -1,5 +1,12 @@
 [workspace]
 
-members = ["server", "task1", "task2", "task3_client", "task4_server"]
+members = [
+    "server",
+    "task1",
+    "task2",
+    "task3_client",
+    # "task4_server",
+    "task4_server_without_tokio",
+]
 
 resolver = "2"

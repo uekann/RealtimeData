@@ -1,14 +1,20 @@
 use crate::stock::record::{Record, StockKind};
-use crate::window::window::Window;
+use crate::stock::window::{TimeStampedRecord, Window};
 use anyhow::Result;
 use chrono::{Local, NaiveTime};
+use serde::{self, Deserialize, Serialize};
+use serde_json;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 
+#[derive(Serialize)]
 pub struct StockInfo {
+    #[serde(serialize_with = "serialize_f64")]
     min: f64,
+    #[serde(serialize_with = "serialize_f64")]
     max: f64,
+    #[serde(serialize_with = "serialize_f64")]
     avg: f64,
+    #[serde(serialize_with = "serialize_f64")]
     std: f64,
 }
 
@@ -21,35 +27,35 @@ impl ToString for StockInfo {
     }
 }
 
-pub struct DataHolder<W: Window<Record>> {
-    window: Arc<Mutex<W>>,
+fn serialize_f64<S>(value: &f64, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    let s = format!("{:.1}", value);
+    serializer.serialize_str(&s)
+}
+
+pub struct DataHolder {
+    window: Box<dyn Window<Record>>,
 }
 
 #[allow(dead_code)]
-impl<W: Window<Record>> DataHolder<W> {
-    pub fn new(window: W) -> DataHolder<W> {
-        DataHolder {
-            window: Arc::new(Mutex::new(window)),
-        }
+impl DataHolder {
+    pub fn new(window: Box<dyn Window<Record>>) -> DataHolder {
+        DataHolder { window }
     }
 
-    pub async fn add_record(&self, record: Record) {
+    pub fn add_record(&mut self, record: Record) {
         self.window
-            .lock()
-            .unwrap()
-            .add_record(record, Local::now().naive_local().time())
-            .await;
+            .add_record(record, Local::now().naive_local().time());
     }
 
-    pub async fn add_records(&self, records: Vec<Record>) {
+    pub fn add_records(&mut self, records: Vec<Record>) {
         self.window
-            .lock()
-            .unwrap()
-            .add_records(records, Local::now().naive_local().time())
-            .await;
+            .add_records(records, Local::now().naive_local().time());
     }
 
-    async fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
+    fn get_info_of_close_value(records: Vec<Record>) -> StockInfo {
         let mut close_values: Vec<f64> = records.iter().map(|r| r.close).collect();
         close_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let min = *close_values.first().unwrap();
@@ -65,20 +71,20 @@ impl<W: Window<Record>> DataHolder<W> {
         StockInfo { min, max, avg, std }
     }
 
-    pub async fn update(&self) {
-        self.window.lock().unwrap().update().await;
+    pub fn update(&mut self) {
+        self.window.update();
     }
 
-    pub async fn is_updated(&self) -> bool {
-        self.window.lock().unwrap().is_updated().await
+    pub fn is_updated(&mut self) -> bool {
+        self.window.is_updated()
     }
 
-    pub async fn get_info(&self) -> Result<HashMap<StockKind, StockInfo>> {
-        let records = self.window.lock().unwrap().get_records().await;
+    pub fn get_info(&mut self) -> HashMap<StockKind, StockInfo> {
+        let records = self.window.get_records();
         let mut classified_records = HashMap::new();
         for record in records {
-            let key = record.1.stock.clone();
-            let value = record.1;
+            let key = record.data.stock.clone();
+            let value = record.data.clone();
             classified_records
                 .entry(key)
                 .or_insert(Vec::new())
@@ -86,13 +92,13 @@ impl<W: Window<Record>> DataHolder<W> {
         }
         let mut stock_info: HashMap<StockKind, StockInfo> = HashMap::new();
         for (stock_kind, records) in classified_records {
-            let info = Self::get_info_of_close_value(records).await;
+            let info = Self::get_info_of_close_value(records);
             stock_info.insert(stock_kind, info);
         }
-        Ok(stock_info)
+        stock_info
     }
 
-    pub async fn get_records(&self) -> Vec<(NaiveTime, Record)> {
-        self.window.lock().unwrap().get_records().await
+    pub fn get_records(&mut self) -> Vec<TimeStampedRecord<Record>> {
+        self.window.get_records()
     }
 }
