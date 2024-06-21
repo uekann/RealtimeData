@@ -26,8 +26,8 @@ fn main() -> Result<()> {
     let stream = TcpStream::connect_timeout(&server_address, Duration::from_secs(10))?;
     let mut stream_reader = BufReader::new(&stream);
 
-    let window = CountWindow::new(2, 10);
-    // let window = TimeWindow::new(ChronoDuration::seconds(2), ChronoDuration::seconds(5));
+    // let window = CountWindow::new(2, 10);
+    let window = TimeWindow::new(ChronoDuration::seconds(2), ChronoDuration::seconds(5));
     let mut data_holder = DataHolder::new(Box::new(window));
 
     let mut buffer = Vec::new();
